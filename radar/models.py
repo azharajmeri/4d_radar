@@ -9,3 +9,16 @@ class SpeedRecord(models.Model):
 
     def __str__(self):
         return f"Speed: {self.speed}, Time: {self.time}, Lane Number: {self.lane_number}, Created At: {self.created_at}"
+
+
+class Display(models.Model):
+    ip = models.CharField(max_length=20, null=True, blank=True)
+    port = models.IntegerField(null=True, blank=True)
+    lane_number = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.ip}:{self.port} - Lane Number: {self.lane_number}"
+
+
+class SpeedLimit(models.Model):
+    limit = models.IntegerField()

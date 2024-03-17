@@ -1,3 +1,4 @@
+import random
 import time
 
 import requests
@@ -18,8 +19,8 @@ class Command(BaseCommand):
         G.receiveData()
         # while True:
         #     try:
-        #         requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": 1})
+        #         requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": random.randint(1, 40)})
         #     except Exception as e:
         #         print(e)
         #         print("Make sure the server is running!")
-            # time.sleep(5)
+        #     time.sleep(5)

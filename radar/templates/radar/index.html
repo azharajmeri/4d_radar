@@ -3,25 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-<h1>Radar Dashboard</h1>
+<div class="container">
+    <h1>Radar Dashboard</h1>
 
-<div>
-    <table border="" id="speed-record">
-        <thead>
-        <tr>
-            <th>Time</th>
-            <th>Speed</th>
-            <th>Lane</th>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="row mt-5">
+        <div class="col-8">
+            <h4>Display Configuration</h4>
+            <form class="row g-3 align-items-center" action="{% url 'save-display-config' %}" method="post">
+                {% csrf_token %}
 
-        </tbody>
-    </table>
+                <!-- Form for Display 1 -->
+                <div class="col-12">
+                    <input type="hidden" name="lane_number" value="1">
+                    <div class="input-group">
+                        <div class="input-group-text">Lane 1</div>
+                        <input type="text" class="form-control" id="ip1" name="ip1" placeholder="IP Address"
+                               value="{{ form_data.display1.ip }}">
+                        <input type="text" class="form-control" id="port1" name="port1" placeholder="Port Number"
+                               value="{{ form_data.display1.port }}">
+                    </div>
+                </div>
+
+                <!-- Form for Display 2 -->
+                <div class="col-12">
+                    <input type="hidden" name="lane_number" value="2">
+                    <div class="input-group">
+                        <div class="input-group-text">Lane 2</div>
+                        <input type="text" class="form-control" id="ip2" name="ip2" placeholder="IP Address"
+                               value="{{ form_data.display2.ip }}">
+                        <input type="text" class="form-control" id="port2" name="port2" placeholder="Port Number"
+                               value="{{ form_data.display2.port }}">
+                    </div>
+                </div>
+
+                <!-- Form for Display 3 -->
+                <div class="col-12">
+                    <input type="hidden" name="lane_number" value="3">
+                    <div class="input-group">
+                        <div class="input-group-text">Lane 3</div>
+                        <input type="text" class="form-control" id="ip3" name="ip3" placeholder="IP Address"
+                               value="{{ form_data.display3.ip }}">
+                        <input type="text" class="form-control" id="port3" name="port3" placeholder="Port Number"
+                               value="{{ form_data.display3.port }}">
+                    </div>
+                </div>
+
+                <!-- Form for Display 4 -->
+                <div class="col-12">
+                    <input type="hidden" name="lane_number" value="4">
+                    <div class="input-group">
+                        <div class="input-group-text">Lane 4</div>
+                        <input type="text" class="form-control" id="ip4" name="ip4" placeholder="IP Address"
+                               value="{{ form_data.display4.ip }}">
+                        <input type="text" class="form-control" id="port4" name="port4" placeholder="Port Number"
+                               value="{{ form_data.display4.port }}">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+
+        </div>
+        <div class="col-4">
+            <h4>Speed Limit Configuration</h4>
+            <form class="row g-3 align-items-center" action="{% url 'save-speed-config' %}" method="post">
+                {% csrf_token %}
+
+                <!-- Form for Display 1 -->
+                <div class="col-12">
+                    <input type="hidden" name="lane_number" value="1">
+                    <div class="input-group">
+                        <div class="input-group-text">Speed Limit</div>
+                        <input type="text" class="form-control" id="speed-limit" name="speed-limit"
+                               placeholder="e.g. 80"
+                               value="{{ speed_limit_obj.limit }}">
+                    </div>
+                </div>
+                <!-- Submit Button -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col">
+            <h4>Recent Speed Records</h4>
+            <table id="speed-record" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th class="bg-light">Time</th>
+                    <th class="bg-light">Speed</th>
+                    <th class="bg-light">Lane</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for speed_record in speed_records %}
+                        <tr>
+                            <td>{{ speed_record.time|date:"g:i:s" }}</td>
+                            <td>{{ speed_record.speed }}</td>
+                            <td>{{ speed_record.lane_number }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script type="text/javascript">
     let url = `ws://${window.location.host}/ws/socket-server/`
     const chatSocket = new WebSocket(url);
