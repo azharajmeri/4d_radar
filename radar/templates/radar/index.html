@@ -5,42 +5,52 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Lets chat!</h1>
+<h1>Radar Dashboard</h1>
 
-<form id="form">
-    <input type="text" name="message"/>
-</form>
+<div>
+    <table border="" id="speed-record">
+        <thead>
+        <tr>
+            <th>Time</th>
+            <th>Speed</th>
+            <th>Lane</th>
+        </tr>
+        </thead>
+        <tbody>
 
-<div id="messages"></div>
+        </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
     let url = `ws://${window.location.host}/ws/socket-server/`
-
-    const chatSocket = new WebSocket(url)
-
+    const chatSocket = new WebSocket(url);
     chatSocket.onmessage = function (e) {
-        let data = JSON.parse(e.data)
-        console.log('Data:', data)
-
-        if (data.type === 'chat') {
-            let messages = document.getElementById('messages')
-
-            messages.insertAdjacentHTML('beforeend', `<div>
-                                        <p>${data.message}</p>
-                                    </div>`)
-        }
+        let data = JSON.parse(e.data);
+        console.log('Data:', data);
+        updateTable(data);
     }
 
-    let form = document.getElementById('form')
-    form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        let message = e.target.message.value
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }))
-        form.reset()
-    })
+    function updateTable(data) {
+        let table = document.getElementById('speed-record');
+        let tbody = table.querySelector('tbody');
+        let rowCount = tbody.rows.length;
 
+        // Append new row
+        let newRow = tbody.insertRow(0);
+        let timeCell = newRow.insertCell(0);
+        let speedCell = newRow.insertCell(1);
+        let laneCell = newRow.insertCell(2);
+
+        timeCell.innerHTML = data.message.time;
+        speedCell.innerHTML = data.message.speed;
+        laneCell.innerHTML = data.message.laneNumber;
+
+        // Remove last row if rowCount exceeds 10
+        if (rowCount >= 10) {
+            tbody.deleteRow(rowCount - 1);
+        }
+    }
 </script>
 </body>
 </html>

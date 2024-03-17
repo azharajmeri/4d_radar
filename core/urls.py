@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from radar.views import radar
+from radar.views import radar, radar_update
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', radar)
+    path('', radar),
+    path('radar-update/', csrf_exempt(radar_update))
 ]

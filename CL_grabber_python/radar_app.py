@@ -1,8 +1,6 @@
 import datetime
 import math
-
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
+import requests
 
 from radar.models import SpeedRecord
 
@@ -29,7 +27,7 @@ def onTrackedObjCallback(trackList):
     None.
 
     """
-    print(".,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.")
+    print(trackList)
 
 
 def onTriggerCallback(trigger):
@@ -63,10 +61,16 @@ def onTriggerCallback(trigger):
     # Calculate speed
     speed = math.sqrt(vel_x ** 2 + vel_y ** 2)
 
-    SpeedRecord.objects.create(speed=speed, lane_number=lane_number, time=datetime.datetime.fromtimestamp(time))
+    instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number, time=datetime.datetime.fromtimestamp(time))
     print("-"*40)
     print(speed, lane_number, datetime.datetime.fromtimestamp(time))
     print("-"*40)
+
+    try:
+        requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": instance.id})
+    except Exception as e:
+        print(e)
+        print("Make sure the server is running!")
 
     # # Broadcast message to channel group
     # async_to_sync(channel_layer.group_send)(
