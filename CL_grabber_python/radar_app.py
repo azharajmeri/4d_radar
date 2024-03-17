@@ -4,7 +4,6 @@ import math
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-import cl_grabber as grabber
 from radar.models import SpeedRecord
 
 
@@ -30,7 +29,7 @@ def onTrackedObjCallback(trackList):
     None.
 
     """
-    print(trackList)
+    print(".,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.")
 
 
 def onTriggerCallback(trigger):
@@ -53,7 +52,8 @@ def onTriggerCallback(trigger):
     None.
 
     """
-    channel_layer = get_channel_layer()
+    print(trigger)
+    # channel_layer = get_channel_layer()
 
     vel_x = trigger['data']['vel_x']
     vel_y = trigger['data']['vel_y']
@@ -63,20 +63,23 @@ def onTriggerCallback(trigger):
     # Calculate speed
     speed = math.sqrt(vel_x ** 2 + vel_y ** 2)
 
-    SpeedRecord.objects.create(speed=speed, lane_number=lane_number, time=time)
+    SpeedRecord.objects.create(speed=speed, lane_number=lane_number, time=datetime.datetime.fromtimestamp(time))
+    print("-"*40)
+    print(speed, lane_number, datetime.datetime.fromtimestamp(time))
+    print("-"*40)
 
-    # Broadcast message to channel group
-    async_to_sync(channel_layer.group_send)(
-        "radar",
-        {
-            "type": "chat_message",
-            "message": {
-                'speed': speed,
-                'time': datetime.datetime.fromtimestamp(time).strftime('%H:%M:%S'),
-                'laneNumber': lane_number
-            }
-        }
-    )
+    # # Broadcast message to channel group
+    # async_to_sync(channel_layer.group_send)(
+    #     "radar",
+    #     {
+    #         "type": "chat_message",
+    #         "message": {
+    #             'speed': speed,
+    #             'time': datetime.datetime.fromtimestamp(time).strftime('%H:%M:%S'),
+    #             'laneNumber': lane_number
+    #         }
+    #     }
+    # )
 
 
 def onErrorCallback(error):

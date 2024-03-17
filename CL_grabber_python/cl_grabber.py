@@ -16,10 +16,10 @@
 import os
 import datetime
 import sys
-from tools import tools
-from sts_class_udp_data import get_data_udp
+from CL_grabber_python.tools import tools
+from CL_grabber_python.sts_class_udp_data import get_data_udp
 from csv import writer
-from servers import servers
+from CL_grabber_python.servers import servers
 import threading
 
 class CL_Grabber():

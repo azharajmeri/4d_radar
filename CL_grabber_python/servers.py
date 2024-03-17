@@ -198,7 +198,7 @@ class servers():
         """
         try:
             ready = select.select(self.connections, self.connectionsOut, 
-                              self.connections, 0.010)   
+                              self.connections, 0.010)
         except socket.error as e:
             print(e)
             return
