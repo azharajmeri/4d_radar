@@ -2,7 +2,8 @@ import datetime
 import math
 import requests
 
-from radar.models import SpeedRecord
+from capture.image import save_image
+from radar.models import SpeedLimit, SpeedRecord
 
 
 def onTrackedObjCallback(trackList):
@@ -57,14 +58,23 @@ def onTriggerCallback(trigger):
     vel_y = trigger['data']['vel_y']
     time = trigger['data']['timeSeconds']
     lane_number = trigger['data']['laneNumber']
+    frame_number = trigger['data']['frameNumber']
 
     # Calculate speed
     speed = math.sqrt(vel_x ** 2 + vel_y ** 2)
 
-    instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number, time=datetime.datetime.fromtimestamp(time))
-    print("-"*40)
-    print(speed, lane_number, datetime.datetime.fromtimestamp(time))
-    print("-"*40)
+    instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number,
+                                          frame_number=frame_number,
+                                          time=datetime.datetime.fromtimestamp(time),)
+    speed_limit_obj = SpeedLimit.objects.first()
+
+    if speed_limit_obj:
+        speed_limit = speed_limit_obj.limit
+    else:
+        speed_limit = 80
+    
+    if speed >= speed_limit:
+        save_image(trigger["data"]["frameNumber"])
 
     try:
         requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": instance.id})

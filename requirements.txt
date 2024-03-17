@@ -2,3 +2,4 @@ channels
 daphne
 Django
 requests
+hikvisionapi

@@ -2,6 +2,7 @@ from django.db import models
 
 
 class SpeedRecord(models.Model):
+    frame_number = models.CharField(max_length=255)
     speed = models.FloatField()
     time = models.DateTimeField()
     lane_number = models.IntegerField()

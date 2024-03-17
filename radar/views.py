@@ -72,8 +72,8 @@ def save_display_config(request):
 
 def save_speed_limit(request):
     speed_limit = request.POST.get('speed-limit')
-
-    if speed_limit_obj := SpeedLimit.objects.first():
+    speed_limit_obj = SpeedLimit.objects.first()
+    if speed_limit_obj:
         # Update the speed limit value
         speed_limit_obj.limit = speed_limit
         speed_limit_obj.save()
