@@ -3,3 +3,5 @@ daphne
 Django
 requests
 hikvisionapi
+colorama
+numpy

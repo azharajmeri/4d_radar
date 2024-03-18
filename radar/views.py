@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from radar.models import SpeedRecord, Display, SpeedLimit
+from radar.models import SpeedRecord, Display, SpeedLimit, Radar
 
 
 def radar(request):
@@ -39,9 +39,11 @@ def radar(request):
     speed_records = SpeedRecord.objects.all().order_by("created_at")[:10]
 
     speed_limit_obj = SpeedLimit.objects.first()
+    radar_obj = Radar.objects.first()
 
     return render(request, "radar/index.html",
-                  {'form_data': form_data, 'speed_records': speed_records, "speed_limit_obj": speed_limit_obj})
+                  {'form_data': form_data, 'speed_records': speed_records,
+                   "speed_limit_obj": speed_limit_obj, "radar_obj": radar_obj})
 
 
 def save_display_config(request):
@@ -80,6 +82,22 @@ def save_speed_limit(request):
     else:
         # Create a new SpeedLimit object if none exists
         SpeedLimit.objects.create(limit=speed_limit)
+
+    return redirect('home')
+
+
+def save_radar_config(request):
+    ip = request.POST.get('radar_ip')
+    host_ip = request.POST.get('host_ip')
+    radar_obj = Radar.objects.first()
+    if radar_obj:
+        # Update the Radar value
+        radar_obj.ip = ip
+        radar_obj.host_ip = host_ip
+        radar_obj.save()
+    else:
+        # Create a new Radar object if none exists
+        Radar.objects.create(ip=ip, host_ip=host_ip)
 
     return redirect('home')
 

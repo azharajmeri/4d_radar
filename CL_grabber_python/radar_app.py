@@ -3,6 +3,7 @@ import math
 import requests
 
 from capture.image import save_image
+from display.program import send_data_to_ip_port
 from radar.models import SpeedLimit, SpeedRecord
 
 
@@ -75,6 +76,11 @@ def onTriggerCallback(trigger):
     
     if speed >= speed_limit:
         save_image(trigger["data"]["frameNumber"])
+        send_data_to_ip_port(lane_number, f"|{speed}|10-70|SLOW DOWN|5|1|1|0|\r\n")
+    elif speed >= (speed_limit * 0.9):
+        send_data_to_ip_port(lane_number, f"|{speed}|0-0|100|8|4|1|0|\r\n")
+    else:
+        send_data_to_ip_port(lane_number, f"|{speed}|0-0|100|8|2|1|0|\r\n")
 
     try:
         requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": instance.id})

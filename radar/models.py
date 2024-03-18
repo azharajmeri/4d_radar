@@ -23,3 +23,12 @@ class Display(models.Model):
 
 class SpeedLimit(models.Model):
     limit = models.IntegerField()
+
+
+class Radar(models.Model):
+    ip = models.CharField(max_length=20, null=True, blank=True)
+
+    host_ip = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.ip}:{self.host_ip}"
