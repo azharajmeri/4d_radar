@@ -41,4 +41,11 @@ class TriggerPoint(models.Model):
     camera = models.IntegerField()
 
     def __str__(self):
-        return f"{self.ip}:{self.host_ip}"
+        return f"{self.display}:{self.camera}"
+
+
+class ConfiguredConnection(models.Model):
+    status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.status}"

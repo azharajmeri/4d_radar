@@ -24,7 +24,7 @@
         <h2 class="fw-normal text-muted mb-4">VASD DASHBOARD</h2>
     </div>
 
-    <form action="" method="post" class="card">
+    <form action="{% url 'save-config' %}" method="post" class="card">
         {% csrf_token %}
         <div class="card-body">
             <div class="row">
@@ -100,7 +100,7 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="camerausername0" name="camerausername0"
                                            placeholder="Camera username"
-                                           value="{{ form_data.display1.camera_username }}">
+                                           value="{{ form_data.display1.camera_user }}">
                                     <label for="floatingInput">Camera username</label>
                                 </div>
                                 <div class="form-floating">
@@ -137,7 +137,7 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="camerausername1" name="camerausername1"
                                            placeholder="Camera username"
-                                           value="{{ form_data.display2.camera_username }}">
+                                           value="{{ form_data.display2.camera_user }}">
                                     <label for="floatingInput">Camera username</label>
                                 </div>
                                 <div class="form-floating">
@@ -174,7 +174,7 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="camerausername2" name="camerausername2"
                                            placeholder="Camera username"
-                                           value="{{ form_data.display3.camera_username }}">
+                                           value="{{ form_data.display3.camera_user }}">
                                     <label for="floatingInput">Camera username</label>
                                 </div>
                                 <div class="form-floating">
@@ -211,7 +211,7 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="camerausername3" name="camerausername3"
                                            placeholder="Camera username"
-                                           value="{{ form_data.display4.camera_username }}">
+                                           value="{{ form_data.display4.camera_user }}">
                                     <label for="floatingInput">Camera username</label>
                                 </div>
                                 <div class="form-floating">

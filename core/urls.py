@@ -17,14 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from radar.views import radar, radar_update, save_display_config, save_speed_limit, save_radar_config
+from radar.views import radar, radar_update, save_config
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', radar, name="home"),
-    path('save-display/', save_display_config, name="save-display-config"),
-    path('save-speed-limit/', save_speed_limit, name="save-speed-config"),
-    path('save-radar-config/', save_radar_config, name="save-radar-config"),
+    path('save-config/', save_config, name="save-config"),
     path('radar-update/', csrf_exempt(radar_update))
 ]
