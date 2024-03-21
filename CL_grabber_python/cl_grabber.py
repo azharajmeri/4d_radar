@@ -426,6 +426,9 @@ class CL_Grabber():
                     """ Create servers """
                     radar = Radar.objects.first()
                     if radar:
+                        print("-"*40)
+                        print(radar.ip, radar.host_ip)
+                        print("-"*40)
                         self.server.radarIP = radar.ip
                         self.server.hostIP = radar.host_ip
 

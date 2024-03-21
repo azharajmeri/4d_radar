@@ -9,10 +9,10 @@ from radar.models import SpeedRecord, Display, SpeedLimit, Radar
 
 def radar(request):
     # Retrieve all rows for lanes 1 to 4
-    display1 = Display.objects.filter(lane_number=1).first()
-    display2 = Display.objects.filter(lane_number=2).first()
-    display3 = Display.objects.filter(lane_number=3).first()
-    display4 = Display.objects.filter(lane_number=4).first()
+    display1 = Display.objects.filter(lane_number=0).first()
+    display2 = Display.objects.filter(lane_number=1).first()
+    display3 = Display.objects.filter(lane_number=2).first()
+    display4 = Display.objects.filter(lane_number=3).first()
 
     # Initialize form data
     form_data = {
@@ -49,19 +49,19 @@ def radar(request):
 def save_display_config(request):
     ip1 = request.POST.get('ip1')
     port1 = int(request.POST.get('port1', 0)) if request.POST.get('port1') else None
-    lane_number1 = 1
+    lane_number1 = 0
 
     ip2 = request.POST.get('ip2')
     port2 = int(request.POST.get('port2', 0)) if request.POST.get('port2') else None
-    lane_number2 = 2
+    lane_number2 = 1
 
     ip3 = request.POST.get('ip3')
     port3 = int(request.POST.get('port3', 0)) if request.POST.get('port3') else None
-    lane_number3 = 3
+    lane_number3 = 2
 
     ip4 = request.POST.get('ip4')
     port4 = int(request.POST.get('port4', 0)) if request.POST.get('port4') else None
-    lane_number4 = 4
+    lane_number4 = 3
 
     # Save or update Display objects
     Display.objects.update_or_create(lane_number=lane_number1, defaults={'ip': ip1, 'port': port1})

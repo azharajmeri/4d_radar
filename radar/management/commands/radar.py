@@ -15,6 +15,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         radar = Radar.objects.first()
         if radar:
+            print(radar.ip, radar.host_ip)
             G = grabber.CL_Grabber(radar.ip, radar.host_ip)
         else:
             G = grabber.CL_Grabber("192.168.40.217", "192.168.40.216")
