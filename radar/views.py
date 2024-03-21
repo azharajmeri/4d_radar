@@ -36,7 +36,7 @@ def radar(request):
         form_data['display4']['ip'] = display4.ip or ''
         form_data['display4']['port'] = display4.port or ''
 
-    speed_records = SpeedRecord.objects.all().order_by("created_at")[:10]
+    speed_records = SpeedRecord.objects.all().order_by("-created_at")[:10]
 
     speed_limit_obj = SpeedLimit.objects.first()
     radar_obj = Radar.objects.first()

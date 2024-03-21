@@ -53,7 +53,7 @@ def onTriggerCallback(trigger):
     None.
 
     """
-    print(trigger)
+    # print(trigger)
     # channel_layer = get_channel_layer()
 
     vel_x = trigger['data']['vel_x']
