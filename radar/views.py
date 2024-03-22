@@ -82,6 +82,8 @@ def radar_update(request):
         {
             "type": "chat_message",
             "message": {
+                'id': speed_rec.id,
+                'frame': speed_rec.frame_number,
                 'speed': speed_rec.speed,
                 'time': speed_rec.time.strftime("%H:%M:%S"),
                 'laneNumber': speed_rec.lane_number

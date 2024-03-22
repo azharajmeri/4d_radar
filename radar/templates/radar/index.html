@@ -299,10 +299,14 @@
 
         // Append new row
         let newRow = tbody.insertRow(0);
-        let timeCell = newRow.insertCell(0);
-        let speedCell = newRow.insertCell(1);
-        let laneCell = newRow.insertCell(2);
+        let idCell = newRow.insertCell(0);
+        let frameCell = newRow.insertCell(1);
+        let timeCell = newRow.insertCell(2);
+        let speedCell = newRow.insertCell(3);
+        let laneCell = newRow.insertCell(4);
 
+        idCell.innerHTML = data.message.id;
+        frameCell.innerHTML = data.message.frame;
         timeCell.innerHTML = data.message.time;
         speedCell.innerHTML = data.message.speed;
         laneCell.innerHTML = data.message.laneNumber;
