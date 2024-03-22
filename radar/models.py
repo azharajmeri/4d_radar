@@ -7,6 +7,7 @@ class SpeedRecord(models.Model):
     time = models.DateTimeField()
     lane_number = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"Speed: {self.speed}, Time: {self.time}, Lane Number: {self.lane_number}, Created At: {self.created_at}"

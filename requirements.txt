@@ -5,3 +5,4 @@ requests
 hikvisionapi
 colorama
 numpy
+pillow

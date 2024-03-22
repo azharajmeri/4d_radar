@@ -249,6 +249,8 @@
                     <table id="speed-record" class="table table-bordered">
                         <thead>
                         <tr>
+                            <th class="bg-light">ID</th>
+                            <th class="bg-light">Framenumber</th>
                             <th class="bg-light">Time</th>
                             <th class="bg-light">Speed</th>
                             <th class="bg-light">Lane</th>
@@ -257,6 +259,8 @@
                         <tbody>
                         {% for speed_record in speed_records %}
                             <tr>
+                                <td>{{ speed_record.id }}</td>
+                                <td>{{ speed_record.frame_number }}</td>
                                 <td>{{ speed_record.time|date:"g:i:s" }}</td>
                                 <td>{{ speed_record.speed }}</td>
                                 <td>{{ speed_record.lane_number }}</td>

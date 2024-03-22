@@ -4,7 +4,7 @@ import requests
 
 from capture.image import save_image
 from display.program import send_data_to_ip_port
-from radar.models import SpeedLimit, SpeedRecord
+from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection
 
 
 def onTrackedObjCallback(trackList):
@@ -33,6 +33,37 @@ def onTrackedObjCallback(trackList):
     pass
 
 
+def save_to_db(speed, lane_number, frame_number, time, speed_limit):
+    instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number,
+                                          frame_number=frame_number,
+                                          time=datetime.datetime.fromtimestamp(time))
+    if speed >= speed_limit:
+        save_image(instance)
+
+    try:
+        requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": instance.id})
+    except Exception as e:
+        print(e)
+        print("Make sure the server is running!")
+
+
+def display_on_screen(speed, speed_limit, lane_number):
+    speed_digits = len(str(speed))
+    if speed_digits == 1:
+        speed_digits_str = "44-0"
+    elif speed_digits == 2:
+        speed_digits_str = "22-0"
+    else:
+        speed_digits_str = "0-0"
+
+    if speed >= speed_limit:
+        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|1|1|0|\r\n", True)
+    elif speed >= (speed_limit * 0.9):
+        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n")
+    else:
+        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n")
+
+
 def onTriggerCallback(trigger):
     """
     This method prints trigger data
@@ -54,61 +85,42 @@ def onTriggerCallback(trigger):
 
     """
     # print(trigger)
-    # channel_layer = get_channel_layer()
+    configured_connection_obj = ConfiguredConnection.objects.first()
+    if configured_connection_obj:
+        if not configured_connection_obj.status:
+            return
+    else:
+        return
 
     vel_x = trigger['data']['vel_x']
     vel_y = trigger['data']['vel_y']
-    time = trigger['data']['timeSeconds']
     lane_number = trigger['data']['laneNumber']
-    frame_number = trigger['data']['frameNumber']
+    trigger_point = trigger['data']['x']
 
     # Calculate speed
     speed = int(math.sqrt(vel_x ** 2 + vel_y ** 2))
 
-    instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number,
-                                          frame_number=frame_number,
-                                          time=datetime.datetime.fromtimestamp(time))
     speed_limit_obj = SpeedLimit.objects.first()
 
     if speed_limit_obj:
         speed_limit = speed_limit_obj.limit
     else:
         speed_limit = 80
-    speed_digits = len(str(speed))
-    if speed_digits == 1:
-        speed_digits_str = "44-0"
-    elif speed_digits == 2:
-        speed_digits_str = "22-0"
+
+    trigger_point_obj = TriggerPoint.objects.first()
+    if trigger_point_obj:
+        display_trigger = trigger_point_obj.display or 70
+        camera_trigger = trigger_point_obj.display or 30
     else:
-        speed_digits_str = "0-0"
+        display_trigger = 70
+        camera_trigger = 30
 
-    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", lane_number)
-    if speed >= speed_limit:
-        save_image(trigger["data"]["frameNumber"])
-        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|1|1|0|\r\n", True)
-    elif speed >= (speed_limit * 0.9):
-        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n")
-    else:
-        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n")
-
-    try:
-        requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": instance.id})
-    except Exception as e:
-        print(e)
-        print("Make sure the server is running!")
-
-    # # Broadcast message to channel group
-    # async_to_sync(channel_layer.group_send)(
-    #     "radar",
-    #     {
-    #         "type": "chat_message",
-    #         "message": {
-    #             'speed': speed,
-    #             'time': datetime.datetime.fromtimestamp(time).strftime('%H:%M:%S'),
-    #             'laneNumber': lane_number
-    #         }
-    #     }
-    # )
+    if trigger_point <= display_trigger + 5 and trigger_point >= display_trigger - 5:
+        display_on_screen(speed, speed_limit, lane_number)
+    elif trigger_point <= camera_trigger + 5 and trigger_point >= camera_trigger - 5:
+        time = trigger['data']['timeSeconds']
+        frame_number = trigger['data']['frameNumber']
+        save_to_db(speed, lane_number, frame_number, time, speed_limit)
 
 
 def onErrorCallback(error):
