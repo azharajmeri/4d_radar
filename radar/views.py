@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from radar.models import SpeedRecord, Display, SpeedLimit, Radar
+from radar.models import SpeedRecord, Display, SpeedLimit, Radar, TriggerPoint, ConfiguredConnection
 from radar.utils import save_configurations
 
 
@@ -57,9 +57,15 @@ def radar(request):
     speed_limit_obj = SpeedLimit.objects.first()
     radar_obj = Radar.objects.first()
 
+    trigger_point_obj = TriggerPoint.objects.first()
+
+    configured_connection_obj = ConfiguredConnection.objects.first()
+
     return render(request, "radar/index.html",
                   {'form_data': form_data, 'speed_records': speed_records,
-                   "speed_limit_obj": speed_limit_obj, "radar_obj": radar_obj})
+                   'speed_limit_obj': speed_limit_obj, 'radar_obj': radar_obj,
+                   'trigger_point_obj': trigger_point_obj,
+                   'connection_status': configured_connection_obj.status if configured_connection_obj else False})
 
 
 def save_config(request):
