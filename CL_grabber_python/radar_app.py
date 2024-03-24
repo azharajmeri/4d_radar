@@ -116,7 +116,7 @@ def onTriggerCallback(trigger):
         camera_trigger = 30
     if trigger_point <= display_trigger + 5 and trigger_point >= display_trigger - 5:
         display_on_screen(speed, speed_limit, lane_number)
-    # elif trigger_point <= camera_trigger + 5 and trigger_point >= camera_trigger - 5:
+    elif trigger_point <= camera_trigger + 5 and trigger_point >= camera_trigger - 5:
         time = trigger['data']['timeSeconds']
         frame_number = trigger['data']['frameNumber']
         save_to_db(speed, lane_number, frame_number, time, speed_limit)
