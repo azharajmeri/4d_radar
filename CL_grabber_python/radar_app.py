@@ -110,10 +110,16 @@ def onTriggerCallback(trigger):
     trigger_point_obj = TriggerPoint.objects.first()
     if trigger_point_obj:
         display_trigger = trigger_point_obj.display or 70
-        camera_trigger = trigger_point_obj.display or 30
+        camera_trigger = trigger_point_obj.camera or 30
     else:
         display_trigger = 70
         camera_trigger = 30
+
+    print("-"*40)
+    print(trigger_point)
+    print(camera_trigger)
+    print(trigger_point <= camera_trigger + 5 and trigger_point >= camera_trigger - 5)
+    print("-"*40)
     if trigger_point <= display_trigger + 5 and trigger_point >= display_trigger - 5:
         display_on_screen(speed, speed_limit, lane_number)
     elif trigger_point <= camera_trigger + 5 and trigger_point >= camera_trigger - 5:
