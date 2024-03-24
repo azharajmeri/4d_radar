@@ -1,0 +1,2 @@
+time,numErr,TrackID,Trigger,X(m),Y(m),Vx(km/h),Vy(km/h),Lane,objType,L(m)
+Sun Mar 24 18:35:51 2024,0,37,[Range],29.500,-2.100,-45.720,0.000,1,b4w,6.000

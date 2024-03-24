@@ -6,3 +6,4 @@ hikvisionapi
 colorama
 numpy
 pillow
+pymssql

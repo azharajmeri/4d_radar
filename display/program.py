@@ -4,6 +4,10 @@ import socket
 
 from radar.models import Display
 
+timer0 = None
+timer1 = None
+timer2 = None
+timer3 = None
 
 def clear_function(lane_number):
     display = Display.objects.filter(lane_number=lane_number).first()

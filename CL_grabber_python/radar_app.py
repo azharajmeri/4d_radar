@@ -4,6 +4,7 @@ import requests
 
 from capture.image import save_image
 from display.program import send_data_to_ip_port
+from msmsql_connector import insert_record
 from radar.loggers import get_logger
 from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection, Location
 
@@ -46,6 +47,7 @@ def save_to_db(speed, lane_number, frame_number, time, speed_limit):
                                           frame_number=frame_number,
                                           time=datetime.datetime.fromtimestamp(time),
                                           location=address)
+    insert_record(instance.id, frame_number, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, f"{instance.id}.jpg", address)
     logger.info(f"{speed}, {lane_number}, {frame_number}, {time}, {address}")
     if speed >= speed_limit:
         save_image(instance)
