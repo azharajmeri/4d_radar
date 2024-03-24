@@ -2,12 +2,14 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from radar.models import SpeedRecord, Display, SpeedLimit, Radar, TriggerPoint, ConfiguredConnection
 from radar.utils import save_configurations
 
 
+@login_required
 def radar(request):
     # Retrieve all rows for lanes 1 to 4
     display1 = Display.objects.filter(lane_number=0).first()
