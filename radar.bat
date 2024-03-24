@@ -19,6 +19,8 @@ echo Virtual environment created and activated, and requirements installed.
 echo.
 
 REM Start Django development server
+python manage.py makemigrations
+python manage.py migrate
 python manage.py radar
 
 REM Wait for user input before exiting
