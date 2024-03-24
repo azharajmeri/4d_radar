@@ -5,7 +5,7 @@ from channels.layers import get_channel_layer
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from radar.models import SpeedRecord, Display, SpeedLimit, Radar, TriggerPoint, ConfiguredConnection
+from radar.models import SpeedRecord, Display, SpeedLimit, Radar, TriggerPoint, ConfiguredConnection, Location
 from radar.utils import save_configurations
 
 
@@ -63,10 +63,13 @@ def radar(request):
 
     configured_connection_obj = ConfiguredConnection.objects.first()
 
+    location = Location.objects.first()
+
     return render(request, "radar/index.html",
                   {'form_data': form_data, 'speed_records': speed_records,
                    'speed_limit_obj': speed_limit_obj, 'radar_obj': radar_obj,
                    'trigger_point_obj': trigger_point_obj,
+                   'location': location,
                    'connection_status': configured_connection_obj.status if configured_connection_obj else False})
 
 

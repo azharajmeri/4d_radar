@@ -4,7 +4,10 @@ import requests
 
 from capture.image import save_image
 from display.program import send_data_to_ip_port
-from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection
+from radar.loggers import get_logger
+from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection, Location
+
+logger = get_logger()
 
 
 def onTrackedObjCallback(trackList):
@@ -34,9 +37,16 @@ def onTrackedObjCallback(trackList):
 
 
 def save_to_db(speed, lane_number, frame_number, time, speed_limit):
+    location_obj = Location.objects.first()
+    if location_obj:
+        address = location_obj.address
+    else:
+        address = ""
     instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number,
                                           frame_number=frame_number,
-                                          time=datetime.datetime.fromtimestamp(time))
+                                          time=datetime.datetime.fromtimestamp(time),
+                                          location=address)
+    logger.info(f"{speed}, {lane_number}, {frame_number}, {time}, {address}")
     if speed >= speed_limit:
         save_image(instance)
 
@@ -115,11 +125,6 @@ def onTriggerCallback(trigger):
         display_trigger = 70
         camera_trigger = 30
 
-    print("-"*40)
-    print(trigger_point)
-    print(camera_trigger)
-    print(trigger_point <= camera_trigger + 5 and trigger_point >= camera_trigger - 5)
-    print("-"*40)
     if trigger_point <= display_trigger + 5 and trigger_point >= display_trigger - 5:
         display_on_screen(speed, speed_limit, lane_number)
     elif trigger_point <= camera_trigger + 5 and trigger_point >= camera_trigger - 5:

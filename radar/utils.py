@@ -1,4 +1,4 @@
-from radar.models import Display, SpeedLimit, Radar, TriggerPoint, ConfiguredConnection
+from radar.models import Display, SpeedLimit, Radar, TriggerPoint, ConfiguredConnection, Location
 
 
 def save_configurations(data):
@@ -77,6 +77,20 @@ def save_configurations(data):
         else:
             # Create a new TriggerPoint object if none exists
             TriggerPoint.objects.create(display=display, camera=camera)
+
+        # LOCATION CONFIG
+        address = data.get('address')
+
+        # Check if a TriggerPoint record already exists
+        location_obj = Location.objects.first()
+
+        if location_obj:
+            # Update the existing TriggerPoint record
+            location_obj.address = address
+            location_obj.save()
+        else:
+            # Create a new TriggerPoint object if none exists
+            Location.objects.create(address=address)
 
     if data.get("connect-status") == "Connect":
         status = True

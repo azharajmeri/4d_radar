@@ -8,6 +8,7 @@ class SpeedRecord(models.Model):
     lane_number = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.CharField(max_length=255, null=True, blank=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"Speed: {self.speed}, Time: {self.time}, Lane Number: {self.lane_number}, Created At: {self.created_at}"
@@ -50,3 +51,7 @@ class ConfiguredConnection(models.Model):
 
     def __str__(self):
         return f"{self.status}"
+
+
+class Location(models.Model):
+    address = models.TextField(null=True, blank=True)

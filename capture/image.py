@@ -4,7 +4,7 @@ import time
 from hikvisionapi import Client
 from PIL import Image, ImageDraw, ImageFont
 
-from radar.models import Display
+from radar.models import Display, Location
 
 
 def add_text(image_path, s_id, speed, lane):
@@ -12,7 +12,12 @@ def add_text(image_path, s_id, speed, lane):
     image = Image.open(image_path)
 
     # Define the text to be added
-    text = f"id: {s_id}\nspeed: {speed}\nlane: {lane}"
+    location_obj = Location.objects.first()
+    if location_obj:
+        address = location_obj.address
+    else:
+        address = ""
+    text = f"id: {s_id}\nspeed: {speed}\nlane: {lane}\naddress: {address}"
 
     # Define font and size (increase the font size)
     font_size = 60
