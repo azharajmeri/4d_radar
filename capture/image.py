@@ -17,7 +17,7 @@ def add_text(image_path, s_id, speed, lane):
         address = location_obj.address
     else:
         address = ""
-    text = f"id: {s_id}\nspeed: {speed}\nlane: {lane}\naddress: {address}"
+    text = f"id: {s_id}\nspeed: {speed}\nlane: {lane}\nlocation: {address}"
 
     # Define font and size (increase the font size)
     font_size = 60
