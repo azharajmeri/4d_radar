@@ -6,6 +6,8 @@ This batch script automates the process of setting up a Django environment with 
 
 - Python installed on your system
 
+#### On Windows, execute the servers by running the batch files: runserver.bat for the Django development server and radar.bat for the Radar server.
+
 ## Instructions
 
 1. Open Command Prompt or Terminal and navigate to your Django project directory.
