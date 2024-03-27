@@ -21,6 +21,13 @@ echo.
 REM Start Django development server
 python manage.py makemigrations
 python manage.py migrate
+
+REM Check if superuser already exists
+python manage.py shell -c "from django.contrib.auth.models import User; exists = User.objects.filter(username='admin').exists(); print(exists)"
+
+REM Create superuser if not already present
+python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin') if not User.objects.filter(username='admin').exists() else None"
+
 python manage.py runserver
 
 REM Wait for user input before exiting
