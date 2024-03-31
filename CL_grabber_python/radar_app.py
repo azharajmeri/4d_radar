@@ -6,7 +6,7 @@ from capture.image import save_image
 from display.program import send_data_to_ip_port
 from msmsql_connector import insert_record
 from radar.loggers import get_logger
-from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection, Location
+from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection, Location, CounterModel
 
 logger = get_logger()
 
@@ -37,16 +37,25 @@ def onTrackedObjCallback(trackList):
     pass
 
 
+def generate_transaction_id(address):
+    instance = CounterModel.get_instance()
+    count = instance.get_count()
+    date_str = datetime.datetime.now().strftime("%Y%m%d")
+    return f"{address}_{date_str}_{count}"
+
+
 def save_to_db(speed, lane_number, frame_number, time, speed_limit):
     location_obj = Location.objects.first()
     if location_obj:
         address = location_obj.address
     else:
         address = ""
+
     instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number,
                                           frame_number=frame_number,
                                           time=datetime.datetime.fromtimestamp(time),
-                                          location=address)
+                                          location=address,
+                                          transcation_id=generate_transaction_id(address))
     insert_record(instance.id, frame_number, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, f"{instance.id}.jpg", address)
     logger.info(f"{speed}, {lane_number}, {frame_number}, {time}, {address}")
 
@@ -72,11 +81,11 @@ def display_on_screen(speed, speed_limit, lane_number):
         speed_digits_str = "0-0"
 
     if speed >= speed_limit:
-        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|1|1|0|\r\n", True)
+        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|1|1|0|\r\n", speed, True)
     elif speed >= (speed_limit * 0.9):
-        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n")
+        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n", speed)
     else:
-        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n")
+        send_data_to_ip_port(lane_number, f"|T|{speed_digits_str}|{speed}|8|4|1|0|\r\n", speed)
 
 
 def onTriggerCallback(trigger):
