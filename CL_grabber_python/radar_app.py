@@ -8,8 +8,6 @@ from msmsql_connector import insert_record
 from radar.loggers import get_logger
 from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection, Location, CounterModel
 
-logger = get_logger()
-
 
 def onTrackedObjCallback(trackList):
     """
@@ -60,6 +58,7 @@ def save_to_db(speed, lane_number, frame_number, time, speed_limit):
     image_name = save_image(instance)
 
     insert_record(instance.id, instance.transcation_id, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, image_name, address)
+    logger = get_logger()
     logger.info(f"{instance.transcation_id}, {speed}, {lane_number}, {frame_number}, {datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')}, {address}")
 
     # if speed >= speed_limit:
