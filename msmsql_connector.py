@@ -11,6 +11,7 @@ def get_connection():
 
 
 def insert_record(rec_id, frame_number, speed, time, lane_number, image, location):
+    print(rec_id, frame_number, speed, time, lane_number, image, location)
     conn = get_connection()
     if conn is None:
         return
@@ -46,6 +47,25 @@ def select_all_records():
     except Exception as e:
         print("\nERROR during selection:", e)
         return None
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        conn.close()
+
+
+def delete_all_records():
+    conn = get_connection()
+    if conn is None:
+        return
+
+    try:
+        cursor = conn.cursor()
+        delete_query = "DELETE FROM SpeedRecord"
+        cursor.execute(delete_query)
+        conn.commit()
+        print("All records deleted successfully.")
+    except Exception as e:
+        print("\nERROR during deletion:", e)
     finally:
         if 'cursor' in locals():
             cursor.close()

@@ -49,20 +49,21 @@ def save_to_db(speed, lane_number, frame_number, time, speed_limit):
     if location_obj:
         address = location_obj.address
     else:
-        address = ""
+        address = "location"
 
     instance = SpeedRecord.objects.create(speed=speed, lane_number=lane_number,
                                           frame_number=frame_number,
                                           time=datetime.datetime.fromtimestamp(time),
                                           location=address,
                                           transcation_id=generate_transaction_id(address))
-    insert_record(instance.id, frame_number, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, f"{instance.id}.jpg", address)
-    logger.info(f"{speed}, {lane_number}, {frame_number}, {time}, {address}")
+    
+    image_name = save_image(instance)
+
+    insert_record(instance.id, instance.transcation_id, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, image_name, address)
+    logger.info(f"{instance.transcation_id}, {speed}, {lane_number}, {frame_number}, {datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')}, {address}")
 
     # if speed >= speed_limit:
     #     save_image(instance)
-
-    save_image(instance)
 
     try:
         requests.post("http://127.0.0.1:8000/radar-update/", json={"instance_id": instance.id})

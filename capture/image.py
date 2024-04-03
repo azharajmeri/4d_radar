@@ -13,7 +13,7 @@ def delete_old_folders():
     if location_obj:
         address = location_obj.address
     else:
-        address = ""
+        address = "location"
 
     location_dir = f'capture/images/{address}'  # Path to the Location directory
     today = datetime.now()
@@ -43,32 +43,42 @@ def delete_old_folders():
                     print(f"Error deleting folder {folder_path}: {e}")
 
 
-def create_folder_structure(instance):
-    delete_old_folders()
+def create_folder_structure():
+    location_obj = Location.objects.first()
+    if location_obj:
+        address = location_obj.address
+    else:
+        address = "location"
+
     base_dir = 'capture/images'
-    location_dir = os.path.join(base_dir, instance.address)
+    location_dir = os.path.join(base_dir, address)
     today_date = datetime.now().strftime('%Y%m%d')
     date_dir = os.path.join(location_dir, today_date)
 
     # Creating base directory if it doesn't exist
     if not os.path.exists(base_dir):
+        print("CREATING:", base_dir)
         os.mkdir(base_dir)
 
     # Creating location directory if it doesn't exist
     if not os.path.exists(location_dir):
+        print("CREATING:", location_dir)
         os.mkdir(location_dir)
 
     # Creating date directory if it doesn't exist
     if not os.path.exists(date_dir):
+        print("CREATING:", date_dir)
         os.mkdir(date_dir)
 
     # Creating lane directories
-    for lane_id in range(1, 5):
-        lane_dir = os.path.join(date_dir, f"Lane_{lane_id}")
+    for lane_id in range(0, 4):
+        lane_dir = os.path.join(date_dir, str(lane_id))
         if not os.path.exists(lane_dir):
+            print("CREATING:", lane_dir)
             os.mkdir(lane_dir)
 
     print("Folder structure created successfully.")
+    delete_old_folders()
 
 
 def add_text(image_path, s_id, speed, lane):
@@ -110,10 +120,10 @@ def save_image(instance):
     if display:
         cam = Client("http://"+display.camera_ip, display.camera_user, display.camera_pass)
         time.sleep(0.1)
-        create_folder_structure(instance)
+        create_folder_structure()
         today_date = datetime.now().strftime('%Y%m%d')
         response = cam.Streaming.channels[102].picture(method='get', type='opaque_data')
-        image_path = f'capture/images/{instance.address}/{today_date}/{instance.lane_number}/{instance.transcation_id}.jpg'
+        image_path = f'capture/images/{instance.location}/{today_date}/{instance.lane_number}/{instance.transcation_id}.jpg'
         with open(image_path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:
@@ -122,3 +132,4 @@ def save_image(instance):
         instance.save()
 
         add_text(image_path, instance.id, instance.speed, instance.lane_number)
+        return image_path
