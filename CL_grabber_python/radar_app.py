@@ -60,10 +60,6 @@ def save_to_db(speed, lane_number, frame_number, time, speed_limit):
     insert_record(instance.id, instance.transcation_id, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, image_name.split("images/")[-1], address)
     
     app_logger.info(f"{instance.transcation_id}, {speed}, {lane_number}, {frame_number}, {datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')}, {address}")
-    
-    print("________LOGGGGGG_______")
-    print(f"{instance.transcation_id}, {speed}, {lane_number}, {frame_number}, {datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')}, {address}")
-    print("_______________________")
 
     # if speed >= speed_limit:
     #     save_image(instance)
