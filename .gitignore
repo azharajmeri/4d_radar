@@ -161,3 +161,8 @@ cython_debug/
 
 capture/images/*
 !capture/images/.gitkeep
+
+logs/*
+!logs/.gitkeep
+
+Log/*

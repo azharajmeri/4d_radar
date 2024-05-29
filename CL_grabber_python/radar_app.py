@@ -5,7 +5,7 @@ import requests
 from capture.image import save_image
 from display.program import send_data_to_ip_port
 from msmsql_connector import insert_record
-from radar.loggers import get_logger
+from radar.loggers import app_logger
 from radar.models import SpeedLimit, SpeedRecord, TriggerPoint, ConfiguredConnection, Location, CounterModel
 
 
@@ -39,7 +39,7 @@ def generate_transaction_id(address):
     instance = CounterModel.get_instance()
     count = instance.get_count()
     date_str = datetime.datetime.now().strftime("%Y%m%d")
-    return f"{address}_{date_str}_{count}"
+    return f"{address}{date_str}{count}"
 
 
 def save_to_db(speed, lane_number, frame_number, time, speed_limit):
@@ -57,9 +57,13 @@ def save_to_db(speed, lane_number, frame_number, time, speed_limit):
     
     image_name = save_image(instance)
 
-    insert_record(instance.id, instance.transcation_id, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, image_name, address)
-    logger = get_logger()
-    logger.info(f"{instance.transcation_id}, {speed}, {lane_number}, {frame_number}, {datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')}, {address}")
+    insert_record(instance.id, instance.transcation_id, speed, datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S'), lane_number, image_name.split("images/")[-1], address)
+    
+    app_logger.info(f"{instance.transcation_id}, {speed}, {lane_number}, {frame_number}, {datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')}, {address}")
+    
+    print("________LOGGGGGG_______")
+    print(f"{instance.transcation_id}, {speed}, {lane_number}, {frame_number}, {datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d %H:%M:%S')}, {address}")
+    print("_______________________")
 
     # if speed >= speed_limit:
     #     save_image(instance)

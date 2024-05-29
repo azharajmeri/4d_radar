@@ -1,3 +1,0 @@
-time,numErr,TrackID,Trigger,X(m),Y(m),Vx(km/h),Vy(km/h),Lane,objType,L(m)
-Tue Mar 19 16:44:34 2024,0,172,[Range],29.800,-0.100,-61.920,-0.360,1,b4w,43.000
-Tue Mar 19 16:45:09 2024,0,176,[Range],29.900,-2.300,-42.480,1.440,1,b4w,43.000

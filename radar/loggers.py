@@ -1,30 +1,36 @@
+from logging.handlers import TimedRotatingFileHandler
 import os
 import logging
-from datetime import datetime
+
+
+class LogConfiguration:
+    """
+    This class is used for the configuration of Logs
+    """
+    logger_name: str = "METRO"
+    logger_formatter: str = "%(asctime)s-%(levelname)s-%(name)s-%(process)d-%(pathname)s|%(lineno)s:: %(funcName)s|%(" \
+                            "lineno)s:: %(message)s "
+    roll_over: str = "MIDNIGHT"
+    backup_count: int = 90
+    log_file_base_name: str = "log"
+    log_file_base_dir: str = f"{os.getcwd()}/logs"
 
 
 def get_logger():
-    # Get current date each time the function is called
-    current_date = datetime.now().strftime('%Y%m%d')
-
-    # Create folder if it doesn't exist
-    log_folder = os.path.join('logs', current_date)
-    os.makedirs(log_folder, exist_ok=True)
-
-    # Set up logger
-    logger = logging.getLogger('speed_logs')
-    logger.setLevel(logging.DEBUG)
-
-    # Create file handler which logs even debug messages
-    log_file = os.path.join(log_folder, 'speed_logs.log')
-    fh = logging.FileHandler(log_file)
-    fh.setLevel(logging.DEBUG)
-
-    # Create formatter and add it to the handler
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-
-    # Add the handler to the logger
-    logger.addHandler(fh)
-
+    """
+    Logging Configurations.
+    """
+    logger = logging.getLogger(LogConfiguration.logger_name)
+    formatter = logging.Formatter(LogConfiguration.logger_formatter)
+    handler = TimedRotatingFileHandler(
+        filename=os.path.join(LogConfiguration.log_file_base_dir,
+                              LogConfiguration.log_file_base_name),
+        when=LogConfiguration.roll_over,
+        interval=1,
+        backupCount=LogConfiguration.backup_count)
+    handler.setFormatter(formatter)
+    logger.setLevel("INFO")
+    logger.addHandler(handler)
     return logger
+
+app_logger = get_logger()

@@ -1,11 +1,15 @@
 import os
 import time
+import shutil
 from datetime import datetime
 
 from hikvisionapi import Client
 from PIL import Image, ImageDraw, ImageFont
 
 from radar.models import Display, Location
+
+# Define the shared folder path
+shared_folder_path = r"\\192.168.40.200\vasd"
 
 
 def delete_old_folders():
@@ -20,7 +24,7 @@ def delete_old_folders():
 
     # Iterate over the directories in the Location directory
     for folder in os.listdir(location_dir):
-        folder_path = os.path.join(location_dir, folder)
+        folder_path = location_dir + "/" + folder
         if os.path.isdir(folder_path):
             # Extract the date from the folder name
             try:
@@ -36,11 +40,39 @@ def delete_old_folders():
             if age.days > 5:
                 # Delete the folder and its contents
                 try:
-                    os.system(f"rm -rf {folder_path}")  # Remove folder and its contents (Unix-based systems)
+                    if os.name == "nt":
+                        fp = folder_path.replace("/", "\\")
+                        os.system(f'rmdir /s /q {fp}')
+                    else:
+                        os.system(f"rm -rf {folder_path}")  # Remove folder and its contents (Unix-based systems)
                     # For Windows, you can use: os.system(f"rmdir /s /q {folder_path}")
                     print(f"Deleted folder: {folder_path}")
                 except Exception as e:
                     print(f"Error deleting folder {folder_path}: {e}")
+
+    # Iterate over the directories in the shared folder path
+    # for root, dirs, files in os.walk(shared_folder_path):
+    #     for folder in dirs:
+    #         folder_path = os.path.join(root, folder)
+    #         # Extract the date from the folder path
+    #         date_str = os.path.basename(folder_path)
+    #         try:
+    #             folder_date = datetime.strptime(date_str, "%Y%m%d")
+    #         except ValueError:
+    #             # Skip if the folder name is not in the expected date format
+    #             continue
+
+    #         # Calculate the age of the folder
+    #         age = today - folder_date
+
+    #         # Check if the folder's date is older than 5 days
+    #         if age.days > 5:
+    #             # Delete the folder and its contents
+    #             try:
+    #                 shutil.rmtree(folder_path)
+    #                 print(f"Deleted shared folder: {folder_path}")
+    #             except Exception as e:
+    #                 print(f"Error deleting shared folder {folder_path}: {e}")
 
 
 def create_folder_structure():
@@ -78,6 +110,14 @@ def create_folder_structure():
             os.mkdir(lane_dir)
 
     print("Folder structure created successfully.")
+
+    # Creating shared folders for all lanes if they don't exist
+    for lane_id in range(0, 4):
+        shared_lane_dir = os.path.join(shared_folder_path, address, today_date, str(lane_id))
+        if not os.path.exists(shared_lane_dir):
+            print("CREATING shared lane directory:", shared_lane_dir)
+            os.makedirs(shared_lane_dir)
+
     delete_old_folders()
 
 
@@ -112,6 +152,14 @@ def add_text(image_path, s_id, speed, lane):
 
     new_image_path = filename + extension
 
+    image.save(new_image_path)
+
+    # Create the full file path for the modified image in the shared folder
+    shared_folder_inner_path = image_path.split("images/")[-1]
+    
+    new_image_path = os.path.join(shared_folder_path, shared_folder_inner_path)
+
+    # Save the modified image to the shared folder
     image.save(new_image_path)
 
 
